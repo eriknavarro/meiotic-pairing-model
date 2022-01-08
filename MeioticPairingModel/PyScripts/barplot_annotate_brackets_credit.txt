@@ -1,0 +1,2 @@
+barplot_annotate_brackets was written by stackoverflow user: cheersmate 
+original post can be found here: https://stackoverflow.com/questions/11517986/indicating-the-statistically-significant-difference-in-bar-graph

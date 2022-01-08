@@ -1,0 +1,363 @@
+read_restart restart.equil
+# VARIABLES
+variable seedone equal 1.0
+
+variable R_nuc equal 12.0
+variable RTM_mag equal 7.5
+variable Nloops equal 5000
+variable Loop_size equal 2000
+variable Dump_every equal 20000
+variable Grav equal 0.0
+
+#########Random Numbers############
+
+variable 	seed1	equal	floor(random(1,10000,${seedone}))
+variable 	seed2	equal	floor(random(1,10000,${seedone}))
+variable 	seed3	equal	floor(random(1,10000,${seedone}))
+variable 	seed4	equal	floor(random(1,10000,${seedone}))
+variable 	seed5	equal	floor(random(1,10000,${seedone}))
+variable 	seed6	equal	floor(random(1,10000,${seedone}))
+variable 	seed7	equal	floor(random(1,10000,${seedone}))
+variable 	seed8	equal	floor(random(1,10000,${seedone}))
+variable 	seed9	equal	floor(random(1,10000,${seedone}))
+variable 	seed10	equal	floor(random(1,10000,${seedone}))
+variable 	seed11	equal	floor(random(1,10000,${seedone}))
+variable 	seed12	equal	floor(random(1,10000,${seedone}))
+variable 	seed13	equal	floor(random(1,10000,${seedone}))
+variable 	seed14	equal	floor(random(1,10000,${seedone}))
+variable 	seed15	equal	floor(random(1,10000,${seedone}))
+variable 	seed16	equal	floor(random(1,10000,${seedone}))
+variable 	seed17	equal	floor(random(1,10000,${seedone}))
+variable 	seed18	equal	floor(random(1,10000,${seedone}))
+variable 	seed19	equal	floor(random(1,10000,${seedone}))
+variable 	seed20	equal	floor(random(1,10000,${seedone}))
+variable 	seed21	equal	floor(random(1,10000,${seedone}))
+variable 	seed22	equal	floor(random(1,10000,${seedone}))
+variable 	seed23	equal	floor(random(1,10000,${seedone}))
+variable 	seed24	equal	floor(random(1,10000,${seedone}))
+variable 	seed25	equal	floor(random(1,10000,${seedone}))
+variable 	seed26	equal	floor(random(1,10000,${seedone}))
+variable 	seed27	equal	floor(random(1,10000,${seedone}))
+variable 	seed28	equal	floor(random(1,10000,${seedone}))
+variable 	seed29	equal	floor(random(1,10000,${seedone}))
+variable 	seed30	equal	floor(random(1,10000,${seedone}))
+variable 	seed31	equal	floor(random(1,10000,${seedone}))
+variable 	seed32	equal	floor(random(1,10000,${seedone}))
+variable 	seed33	equal	floor(random(1,10000,${seedone}))
+variable 	seed34	equal	floor(random(1,10000,${seedone}))
+variable 	seed35	equal	floor(random(1,10000,${seedone}))
+variable 	seed36	equal	floor(random(1,10000,${seedone}))
+variable 	seed37	equal	floor(random(1,10000,${seedone}))
+variable 	seed38	equal	floor(random(1,10000,${seedone}))
+variable 	seed39	equal	floor(random(1,10000,${seedone}))
+variable 	seed40	equal	floor(random(1,10000,${seedone}))
+variable 	seed41	equal	floor(random(1,10000,${seedone}))
+variable 	seed42	equal	floor(random(1,10000,${seedone}))
+variable 	seed43	equal	floor(random(1,10000,${seedone}))
+variable 	seed44	equal	floor(random(1,10000,${seedone}))
+variable 	seed45	equal	floor(random(1,10000,${seedone}))
+variable 	seed46	equal	floor(random(1,10000,${seedone}))
+variable 	seed47	equal	floor(random(1,10000,${seedone}))
+variable 	seed48	equal	floor(random(1,10000,${seedone}))
+variable 	seed49	equal	floor(random(1,10000,${seedone}))
+variable 	seed50	equal	floor(random(1,10000,${seedone}))
+
+variable fname index init.txt
+variable simname index ${seedone}
+
+neighbor 5 bin
+neigh_modify every 2 delay 10 check yes page 100000
+comm_modify cutoff 6.5
+
+bond_style      harmonic
+bond_coeff	1 100 1.0
+bond_coeff	2 50.0 1.0
+bond_coeff	3 50.0 1.0
+
+pair_style	lj/cut 1.1224620483 
+pair_modify shift yes
+pair_coeff	* * 1.0 1.0 1.1224620483 
+special_bonds lj 0.0 1.0 1.0
+
+group others id 2:99 102:199 202:299 302:399
+group ends id 1 100 101 200 201 300 301 400
+group middle id 26:75 126:175 226:275 326:375   
+#group nodes id 121:130 371:380 621:630 871:880
+group Pair1 id 1:200
+group Pair2 id 201:400
+compute csym all centro/atom fcc
+compute peratom all pe/atom
+#####################################################
+
+fix wallsphere all indent 100.0 sphere 0.0 0.0 0.0 ${R_nuc} side in
+
+thermo_style custom step temp 
+thermo 100000 
+timestep .01
+
+
+fix tempa others langevin 1.0 1.0 .1 ${seed2} gjf no
+velocity others create 1.0 ${seed3}
+fix	1 others nve/limit 10
+
+fix step ends nve/manifold/rattle 1e-4 100 sphere ${R_nuc}
+fix temp ends langevin 1.0 1.0 .1 ${seed6} gjf no
+
+
+
+#### Long Ramp at high T to randomly Orient ####
+run 1000000
+
+
+group poly1end1 id 1
+group poly1end2 id 100
+group poly2end1 id 101
+group poly2end2 id 200
+group poly3end1 id 201
+group poly3end2 id 300
+group poly4end1 id 301
+group poly4end2 id 400
+
+####This is t=0 #######################
+
+fix tempa others langevin 1.0 1.0 .1 ${seed2} gjf no
+fix temp ends langevin 1.0 1.0 .1 ${seed6} gjf no
+fix	1 others nve/limit .25
+
+fix	12	Pair1	bond/create	10	2	2	1	2	prob	0.85	${seed21}
+fix	15	Pair1	bond/create	10	5	5	1	2	prob	0.85	${seed3}
+fix	20	Pair1	bond/create	10	10	10	1	2	prob	0.85	${seed33}
+fix	25	Pair1	bond/create	10	15	15	1	2	prob	0.85	${seed24}
+fix	30	Pair1	bond/create	10	20	20	1	2	prob	0.85	${seed10}
+fix	35	Pair1	bond/create	10	25	25	1	2	prob	0.85	${seed26}
+fix	40	Pair1	bond/create	10	30	30	1	2	prob	0.85	${seed10}
+fix	45	Pair1	bond/create	10	35	35	1	2	prob	0.85	${seed48}
+fix	50	Pair1	bond/create	10	40	40	1	2	prob	0.85	${seed16}
+fix	55	Pair1	bond/create	10	45	45	1	2	prob	0.85	${seed16}
+fix	60	Pair1	bond/create	10	50	50	1	2	prob	0.85	${seed1}
+fix	65	Pair1	bond/create	10	55	55	1	2	prob	0.85	${seed24}
+fix	70	Pair1	bond/create	10	60	60	1	2	prob	0.85	${seed38}
+fix	75	Pair1	bond/create	10	65	65	1	2	prob	0.85	${seed50}
+fix	80	Pair1	bond/create	10	70	70	1	2	prob	0.85	${seed18}
+fix	85	Pair1	bond/create	10	75	75	1	2	prob	0.85	${seed8}
+fix	90	Pair1	bond/create	10	80	80	1	2	prob	0.85	${seed17}
+fix	95	Pair1	bond/create	10	85	85	1	2	prob	0.85	${seed14}
+fix	100	Pair1	bond/create	10	90	90	1	2	prob	0.85	${seed11}
+fix	105	Pair1	bond/create	10	95	95	1	2	prob	0.85	${seed47}
+fix	109	Pair1	bond/create	10	99	99	1	2	prob	0.85	${seed5}
+											
+fix	262	Pair2	bond/create	10	2	2	1	2	prob	0.85	${seed39}
+fix	265	Pair2	bond/create	10	5	5	1	2	prob	0.85	${seed20}
+fix	270	Pair2	bond/create	10	10	10	1	2	prob	0.85	${seed47}
+fix	275	Pair2	bond/create	10	15	15	1	2	prob	0.85	${seed41}
+fix	280	Pair2	bond/create	10	20	20	1	2	prob	0.85	${seed49}
+fix	285	Pair2	bond/create	10	25	25	1	2	prob	0.85	${seed35}
+fix	290	Pair2	bond/create	10	30	30	1	2	prob	0.85	${seed24}
+fix	295	Pair2	bond/create	10	35	35	1	2	prob	0.85	${seed24}
+fix	300	Pair2	bond/create	10	40	40	1	2	prob	0.85	${seed14}
+fix	305	Pair2	bond/create	10	45	45	1	2	prob	0.85	${seed14}
+fix	310	Pair2	bond/create	10	50	50	1	2	prob	0.85	${seed24}
+fix	315	Pair2	bond/create	10	55	55	1	2	prob	0.85	${seed20}
+fix	320	Pair2	bond/create	10	60	60	1	2	prob	0.85	${seed43}
+fix	325	Pair2	bond/create	10	65	65	1	2	prob	0.85	${seed5}
+fix	330	Pair2	bond/create	10	70	70	1	2	prob	0.85	${seed38}
+fix	335	Pair2	bond/create	10	75	75	1	2	prob	0.85	${seed28}
+fix	340	Pair2	bond/create	10	80	80	1	2	prob	0.85	${seed11}
+fix	345	Pair2	bond/create	10	85	85	1	2	prob	0.85	${seed27}
+fix	350	Pair2	bond/create	10	90	90	1	2	prob	0.85	${seed11}
+fix	355	Pair2	bond/create	10	95	95	1	2	prob	0.85	${seed19}
+fix	359	Pair2	bond/create	10	99	99	1	2	prob	0.85	${seed42}
+
+
+run 1
+
+fix 362 all bond/break 10 2 .1 prob .0000125 ${seedone}
+
+
+fix 535 ends gravity ${Grav} spherical 0.0 -180
+fix 536 ends viscous 25
+
+
+##Dump Files#####
+
+compute blist all property/local btype batom1 batom2 
+dump 999 all local ${Dump_every} bond_list.txt index c_blist[1] c_blist[2] c_blist[3] 
+dump_modify 999 append yes
+
+compute blist2 middle property/local btype batom1 batom2 
+dump 998 middle local ${Dump_every} mbond_list.txt index c_blist2[1] c_blist2[2] c_blist2[3]
+dump_modify 998 append yes
+
+dump 1 all custom ${Dump_every} full.traj.cfg mass type xs ys zs mol 
+dump_modify 1 append yes
+
+##RTMs#####
+#Loop length and time determines simulation length####
+
+group poly1end1 id 1
+group poly1end2 id 100
+group poly2end1 id 101
+group poly2end2 id 200
+group poly3end1 id 201
+group poly3end2 id 300
+group poly4end1 id 301
+group poly4end2 id 400
+
+variable mag equal ${RTM_mag}
+
+label loop
+variable a loop ${Nloops}
+
+variable yesno1 equal round(random(0,1,${seedone}))
+variable yesno2 equal round(random(0,1,${seedone}))
+variable yesno3 equal round(random(0,1,${seedone}))
+variable yesno4 equal round(random(0,1,${seedone}))
+variable yesno5 equal round(random(0,1,${seedone}))
+variable yesno6 equal round(random(0,1,${seedone}))
+variable yesno7 equal round(random(0,1,${seedone}))
+variable yesno8 equal round(random(0,1,${seedone}))
+
+variable yesno1x equal ${yesno1}
+variable yesno2x equal ${yesno2}
+variable yesno3x equal ${yesno3}
+variable yesno4x equal ${yesno4}
+variable yesno5x equal ${yesno5}
+variable yesno6x equal ${yesno6}
+variable yesno7x equal ${yesno7}
+variable yesno8x equal ${yesno8}
+
+variable yesno12 equal round(random(0,1,${seedone}))
+variable yesno22 equal round(random(0,1,${seedone}))
+variable yesno32 equal round(random(0,1,${seedone}))
+variable yesno42 equal round(random(0,1,${seedone}))
+variable yesno52 equal round(random(0,1,${seedone}))
+variable yesno62 equal round(random(0,1,${seedone}))
+variable yesno72 equal round(random(0,1,${seedone}))
+variable yesno82 equal round(random(0,1,${seedone}))
+
+variable yesno1x2 equal ${yesno12}
+variable yesno2x2 equal ${yesno22}
+variable yesno3x2 equal ${yesno32}
+variable yesno4x2 equal ${yesno42}
+variable yesno5x2 equal ${yesno52}
+variable yesno6x2 equal ${yesno62}
+variable yesno7x2 equal ${yesno72}
+variable yesno8x2 equal ${yesno82}
+
+variable 	ydir1	equal	1*random(-1,1,${seedone})
+variable 	zdir1	equal	1*random(-1,1,${seedone})
+variable 	xdir1	equal	1*random(-1,1,${seedone})
+
+variable 	ydir2	equal	1*random(-1,1,${seedone})
+variable 	zdir2	equal	1*random(-1,1,${seedone})
+variable 	xdir2	equal	1*random(-1,1,${seedone})
+
+variable 	ydir3	equal	1*random(-1,1,${seedone})
+variable 	zdir3	equal	1*random(-1,1,${seedone})
+variable 	xdir3	equal	1*random(-1,1,${seedone})
+
+variable 	ydir4	equal	1*random(-1,1,${seedone})
+variable 	zdir4	equal	1*random(-1,1,${seedone})
+variable 	xdir4	equal	1*random(-1,1,${seedone})
+
+variable 	ydir5	equal	1*random(-1,1,${seedone})
+variable 	zdir5	equal	1*random(-1,1,${seedone})
+variable 	xdir5	equal	1*random(-1,1,${seedone})
+
+variable 	ydir6	equal	1*random(-1,1,${seedone})
+variable 	zdir6	equal	1*random(-1,1,${seedone})
+variable 	xdir6	equal	1*random(-1,1,${seedone})
+
+variable 	ydir7	equal	1*random(-1,1,${seedone})
+variable 	zdir7	equal	1*random(-1,1,${seedone})
+variable 	xdir7	equal	1*random(-1,1,${seedone})
+
+variable 	ydir8	equal	1*random(-1,1,${seedone})
+variable 	zdir8	equal	1*random(-1,1,${seedone})
+variable 	xdir8	equal	1*random(-1,1,${seedone})
+
+variable 	ydir1x	equal	${ydir1}
+variable 	zdir1x	equal	${zdir1}
+variable 	xdir1x	equal	${xdir1}
+
+variable 	ydir2x	equal	${ydir2}
+variable 	zdir2x	equal	${zdir2}
+variable 	xdir2x	equal	${xdir2}
+
+variable 	ydir3x	equal	${ydir3}
+variable 	zdir3x	equal	${zdir3}
+variable 	xdir3x	equal	${xdir3}
+
+variable 	ydir4x	equal	${ydir4}
+variable 	zdir4x	equal	${zdir4}
+variable 	xdir4x	equal	${xdir4}
+
+variable 	ydir5x	equal	${ydir5}
+variable 	zdir5x	equal	${zdir5}
+variable 	xdir5x	equal	${xdir5}
+
+variable 	ydir6x	equal	${ydir6}
+variable 	zdir6x	equal	${zdir6}
+variable 	xdir6x	equal	${xdir6}
+
+variable 	ydir7x	equal	${ydir7}
+variable 	zdir7x	equal	${zdir7}
+variable 	xdir7x	equal	${xdir7}
+
+variable 	ydir8x	equal	${ydir8}
+variable 	zdir8x	equal	${zdir8}
+variable 	xdir8x	equal	${xdir8}
+
+variable normfactor1 equal sqrt(${ydir1x}^2+${xdir1x}^2+${zdir1x}^2)
+variable normfactor2 equal sqrt(${ydir2x}^2+${xdir2x}^2+${zdir2x}^2)
+variable normfactor3 equal sqrt(${ydir3x}^2+${xdir3x}^2+${zdir3x}^2)
+variable normfactor4 equal sqrt(${ydir4x}^2+${xdir4x}^2+${zdir4x}^2)
+variable normfactor5 equal sqrt(${ydir5x}^2+${xdir5x}^2+${zdir5x}^2)
+variable normfactor6 equal sqrt(${ydir6x}^2+${xdir6x}^2+${zdir6x}^2)
+variable normfactor7 equal sqrt(${ydir7x}^2+${xdir7x}^2+${zdir7x}^2)
+variable normfactor8 equal sqrt(${ydir8x}^2+${xdir8x}^2+${zdir8x}^2)
+
+variable 	ydir1n	equal	${yesno1x2}*${yesno1x}*${mag}*${ydir1x}/${normfactor1}
+variable 	zdir1n	equal	${yesno1x2}*${yesno1x}*${mag}*${zdir1x}/${normfactor1}
+variable 	xdir1n	equal	${yesno1x2}*${yesno1x}*${mag}*${xdir1x}/${normfactor1}
+
+variable 	ydir2n	equal	${yesno2x2}*${yesno2x}*${mag}*${ydir2x}/${normfactor2}
+variable 	zdir2n	equal	${yesno2x2}*${yesno2x}*${mag}*${zdir2x}/${normfactor2}
+variable 	xdir2n	equal	${yesno2x2}*${yesno2x}*${mag}*${xdir2x}/${normfactor2}
+
+variable 	ydir3n	equal	${yesno3x2}*${yesno3x}*${mag}*${ydir3x}/${normfactor3}
+variable 	zdir3n	equal	${yesno3x2}*${yesno3x}*${mag}*${zdir3x}/${normfactor3}
+variable 	xdir3n	equal	${yesno3x2}*${yesno3x}*${mag}*${xdir3x}/${normfactor3}
+
+variable 	ydir4n	equal	${yesno4x2}*${yesno4x}*${mag}*${ydir4x}/${normfactor4}
+variable 	zdir4n	equal	${yesno4x2}*${yesno4x}*${mag}*${zdir4x}/${normfactor4}
+variable 	xdir4n	equal	${yesno4x2}*${yesno4x}*${mag}*${xdir4x}/${normfactor4}
+
+variable 	ydir5n	equal	${yesno5x2}*${yesno5x}*${mag}*${ydir5x}/${normfactor5}
+variable 	zdir5n	equal	${yesno5x2}*${yesno5x}*${mag}*${zdir5x}/${normfactor5}
+variable 	xdir5n	equal	${yesno5x2}*${yesno5x}*${mag}*${xdir5x}/${normfactor5}
+
+variable 	ydir6n	equal	${yesno6x2}*${yesno6x}*${mag}*${ydir6x}/${normfactor6}
+variable 	zdir6n	equal	${yesno6x2}*${yesno6x}*${mag}*${zdir6x}/${normfactor6}
+variable 	xdir6n	equal	${yesno6x2}*${yesno6x}*${mag}*${xdir6x}/${normfactor6}
+
+variable 	ydir7n	equal	${yesno7x2}*${yesno7x}*${mag}*${ydir7x}/${normfactor7}
+variable 	zdir7n	equal	${yesno7x2}*${yesno7x}*${mag}*${zdir7x}/${normfactor7}
+variable 	xdir7n	equal	${yesno7x2}*${yesno7x}*${mag}*${xdir7x}/${normfactor7}
+
+variable 	ydir8n	equal	${yesno8x2}*${yesno8x}*${mag}*${ydir8x}/${normfactor8}
+variable 	zdir8n	equal	${yesno8x2}*${yesno8x}*${mag}*${zdir8x}/${normfactor8}
+variable 	xdir8n	equal	${yesno8x2}*${yesno8x}*${mag}*${xdir8x}/${normfactor8}
+
+fix freeze poly1end1 addforce ${xdir1n} ${ydir1n} ${zdir1n}
+fix freeze2 poly1end2 addforce ${xdir2n} ${ydir2n} ${zdir2n}
+fix freeze3 poly2end1 addforce ${xdir3n} ${ydir3n} ${zdir3n}
+fix freeze4 poly2end2 addforce ${xdir4n} ${ydir4n} ${zdir4n}
+fix freeze5 poly3end1 addforce ${xdir5n} ${ydir5n} ${zdir5n}
+fix freeze6 poly3end2 addforce ${xdir6n} ${ydir6n} ${zdir6n}
+fix freeze7 poly4end1 addforce ${xdir7n} ${ydir7n} ${zdir7n}
+fix freeze8 poly4end2 addforce ${xdir8n} ${ydir8n} ${zdir8n}
+
+run ${Loop_size}
+next a
+jump SELF loop
