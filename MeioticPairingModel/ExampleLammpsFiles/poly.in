@@ -124,7 +124,7 @@ fix tempa others langevin 1.0 1.0 .1 ${seed2} gjf no
 fix temp ends langevin 1.0 1.0 .1 ${seed6} gjf no
 fix	1 others nve/limit .25
 
-fix	12	Pair1	bond/create	10	2	2	1	2	prob	0.85	${seed21}
+fix	12	Pair1	bond/create	10	1	1	1	2	prob	0.85	${seed21}
 fix	15	Pair1	bond/create	10	5	5	1	2	prob	0.85	${seed3}
 fix	20	Pair1	bond/create	10	10	10	1	2	prob	0.85	${seed33}
 fix	25	Pair1	bond/create	10	15	15	1	2	prob	0.85	${seed24}
@@ -144,9 +144,9 @@ fix	90	Pair1	bond/create	10	80	80	1	2	prob	0.85	${seed17}
 fix	95	Pair1	bond/create	10	85	85	1	2	prob	0.85	${seed14}
 fix	100	Pair1	bond/create	10	90	90	1	2	prob	0.85	${seed11}
 fix	105	Pair1	bond/create	10	95	95	1	2	prob	0.85	${seed47}
-fix	109	Pair1	bond/create	10	99	99	1	2	prob	0.85	${seed5}
+fix	109	Pair1	bond/create	10	100	100	1	2	prob	0.85	${seed5}
 											
-fix	262	Pair2	bond/create	10	2	2	1	2	prob	0.85	${seed39}
+fix	262	Pair2	bond/create	10	1	1	1	2	prob	0.85	${seed39}
 fix	265	Pair2	bond/create	10	5	5	1	2	prob	0.85	${seed20}
 fix	270	Pair2	bond/create	10	10	10	1	2	prob	0.85	${seed47}
 fix	275	Pair2	bond/create	10	15	15	1	2	prob	0.85	${seed41}
@@ -166,7 +166,7 @@ fix	340	Pair2	bond/create	10	80	80	1	2	prob	0.85	${seed11}
 fix	345	Pair2	bond/create	10	85	85	1	2	prob	0.85	${seed27}
 fix	350	Pair2	bond/create	10	90	90	1	2	prob	0.85	${seed11}
 fix	355	Pair2	bond/create	10	95	95	1	2	prob	0.85	${seed19}
-fix	359	Pair2	bond/create	10	99	99	1	2	prob	0.85	${seed42}
+fix	359	Pair2	bond/create	10	100	100	1	2	prob	0.85	${seed42}
 
 
 run 1
